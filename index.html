@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Available Rooms</title>
-    <link rel="stylesheet" href="style.css" /> <!-- Include the CSS file -->
-  </head>
-  <body>
-    <h2>Available Rooms</h2>
-    <div id="roomsContainer"></div> <!-- Container for room buttons -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Rooms</title>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database.js"></script>
+    <style>
+        #rooms {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Available Rooms</h1>
+    <div id="rooms"></div>
 
-    <script type="module" src="/main.js"></script>
-  </body>
+    <script src="app.js"></script>
+</body>
 </html>
