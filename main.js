@@ -1,4 +1,3 @@
-// main.js
 import { database } from './firebase.js';
 
 function fetchRooms() {
@@ -22,7 +21,11 @@ function fetchRooms() {
 }
 
 function joinRoom(roomCode) {
-    alert(`Joining room: ${roomCode}`);
+    // Construct the URL for the third URL with the room code as a query parameter
+    const joinUrl = `https://patientsidetesting.netlify.app/?room=${encodeURIComponent(roomCode)}`;
+    
+    // Redirect to the third URL with the room code
+    window.location.href = joinUrl;
 }
 
 // Fetch rooms on page load
