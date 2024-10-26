@@ -1,30 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebRTC Join Room</title>
-    <link rel="stylesheet" href="/style.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Join a Room</h1>
+import { database } from './firebase.js';
 
-      <div class="videos">
-        <h3>Local Stream</h3>
-        <video id="webcamVideo" autoplay playsinline></video>
-        <h3>Remote Stream</h3>
-        <video id="remoteVideo" autoplay playsinline></video> <!-- Add this line -->
-      </div>
+function fetchRooms() {
+    const roomsRef = database.ref('realtimeCalls');
+    roomsRef.once('value', (snapshot) => {
+        const rooms = snapshot.val();
+        const roomsDiv = document.getElementById('rooms');
+        roomsDiv.innerHTML = ''; // Clear existing buttons
 
-      <div class="controls">
-        <input id="roomInput" type="text" placeholder="Enter Room ID" />
-        <button id="joinButton">Join Room</button>
-        <button id="hangupButton" disabled>Hang Up</button>
-      </div>
-    </div>
+        if (rooms) {
+            Object.keys(rooms).forEach((roomCode) => {
+                const button = document.createElement('button');
+                button.textContent = `Join Room ${roomCode}`;
+                button.onclick = () => joinRoom(roomCode);
+                roomsDiv.appendChild(button);
+            });
+        } else {
+            roomsDiv.innerHTML = '<p>No active rooms available.</p>';
+        }
+    });
+}
 
-    <script type="module" src="/main.js"></script>
-  </body>
-</html>
+function joinRoom(roomCode) {
+    // Construct the URL for the third URL with the room code as a query parameter
+    const joinUrl = `https://patientsidetesting.netlify.app/?room=${encodeURIComponent(roomCode)}`;
+    
+    // Redirect to the third URL with the room code
+    window.location.href = joinUrl;
+}
+
+// Fetch rooms on page load
+fetchRooms();
