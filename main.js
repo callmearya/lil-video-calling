@@ -11,30 +11,37 @@ const firebaseConfig = {
   appId: "1:309006701748:web:2cfa73093e14fbcc2af3e1"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
 
-const database = firebase.database(); // Initialize Realtime Database
-const roomsContainer = document.getElementById('roomsContainer');
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
 
-// Fetch available rooms from Firebase Realtime Database and display them as buttons
-async function loadRooms() {
-  const roomsRef = database.ref('realtimeCalls');
-  roomsRef.on('value', (snapshot) => {
-    roomsContainer.innerHTML = ''; // Clear previous content
-    snapshot.forEach((childSnapshot) => {
-      const roomId = childSnapshot.key; // Unique room code
-      const button = document.createElement('button');
-      button.textContent = roomId; // Display the room ID
-      button.className = 'room-button'; // Add class for styling
-      button.onclick = () => {
-        window.location.href = `/join.html?room=${roomId}`; // Redirect to join page
-      };
-      roomsContainer.appendChild(button);
+// Function to fetch room codes and display them as buttons
+function fetchRooms() {
+    const roomsRef = database.ref('realtimeCalls');
+    roomsRef.once('value', (snapshot) => {
+        const rooms = snapshot.val();
+        const roomsDiv = document.getElementById('rooms');
+        roomsDiv.innerHTML = ''; // Clear existing buttons
+
+        if (rooms) {
+            Object.keys(rooms).forEach((roomCode) => {
+                const button = document.createElement('button');
+                button.textContent = `Join Room ${roomCode}`;
+                button.onclick = () => joinRoom(roomCode);
+                roomsDiv.appendChild(button);
+            });
+        } else {
+            roomsDiv.innerHTML = '<p>No active rooms available.</p>';
+        }
     });
-  });
 }
 
-// Load rooms when the page is loaded
-window.onload = loadRooms;
+// Function to handle joining a room (you can customize this)
+function joinRoom(roomCode) {
+    alert(`Joining room: ${roomCode}`);
+    // Implement your room joining logic here
+}
+
+// Fetch rooms on page load
+fetchRooms();
