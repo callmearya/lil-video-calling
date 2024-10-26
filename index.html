@@ -32,7 +32,7 @@
 
     // Function to fetch rooms from Realtime Database
     function fetchRooms() {
-      realtimeDatabase.ref('rooms').on('value', (snapshot) => {
+      realtimeDatabase.ref('calls').on('value', (snapshot) => {
         roomList.innerHTML = ''; // Clear previous room list
 
         snapshot.forEach((roomSnapshot) => {
