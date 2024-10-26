@@ -16,15 +16,19 @@ if (!firebase.apps.length) {
 }
 const firestore = firebase.firestore();
 
-const roomsList = document.getElementById('roomsList');
+const roomsContainer = document.getElementById('roomsContainer');
 
-// Fetch available rooms from Firestore and display them
+// Fetch available rooms from Firestore and display them as buttons
 async function loadRooms() {
   const roomsSnapshot = await firestore.collection('calls').get();
   roomsSnapshot.forEach((doc) => {
-    const li = document.createElement('li');
-    li.textContent = doc.id; // Display the room ID
-    roomsList.appendChild(li);
+    const button = document.createElement('button');
+    button.textContent = doc.id; // Display the room ID
+    button.className = 'room-button'; // Add class for styling
+    button.onclick = () => {
+      window.location.href = `/join.html?room=${doc.id}`; // Redirect to join page
+    };
+    roomsContainer.appendChild(button);
   });
 }
 
