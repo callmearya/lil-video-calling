@@ -32,18 +32,19 @@ async function fetchRooms() {
         const roomData = rooms[roomId];
         const button = document.createElement('button');
         button.textContent = roomId;
-        
+
         // Check participant count and enable/disable button
-        if (roomData.participantCount >= 2) {
+        if (roomData.participants >= 2) {
           button.disabled = true; // Greyed out if full
           button.classList.add('full'); // Optional: Add a class for styling
         } else {
           button.onclick = () => {
             // Logic to join the room goes here
             console.log(`Joining room: ${roomId}`);
+            // Here you can add code to actually join the room (e.g., redirecting to another page or setting up WebRTC)
           };
         }
-        
+
         roomsContainer.appendChild(button);
       });
     } else {
