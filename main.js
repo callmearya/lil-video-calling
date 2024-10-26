@@ -1,6 +1,5 @@
-import './style.css';
 import firebase from 'firebase/app';
-import 'firebase/firestore';
+import 'firebase/database'; // Import Realtime Database
 
 const firebaseConfig = {
   apiKey: "AIzaSyD1b7InCyJf03f82MBrFCXNd_1lir3nWrQ",
@@ -15,21 +14,25 @@ const firebaseConfig = {
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
-const firestore = firebase.firestore();
 
+const database = firebase.database(); // Initialize Realtime Database
 const roomsContainer = document.getElementById('roomsContainer');
 
-// Fetch available rooms from Firestore and display them as buttons
+// Fetch available rooms from Firebase Realtime Database and display them as buttons
 async function loadRooms() {
-  const roomsSnapshot = await firestore.collection('calls').get();
-  roomsSnapshot.forEach((doc) => {
-    const button = document.createElement('button');
-    button.textContent = doc.id; // Display the room ID
-    button.className = 'room-button'; // Add class for styling
-    button.onclick = () => {
-      window.location.href = `/join.html?room=${doc.id}`; // Redirect to join page
-    };
-    roomsContainer.appendChild(button);
+  const roomsRef = database.ref('realtimeCalls');
+  roomsRef.on('value', (snapshot) => {
+    roomsContainer.innerHTML = ''; // Clear previous content
+    snapshot.forEach((childSnapshot) => {
+      const roomId = childSnapshot.key; // Unique room code
+      const button = document.createElement('button');
+      button.textContent = roomId; // Display the room ID
+      button.className = 'room-button'; // Add class for styling
+      button.onclick = () => {
+        window.location.href = `/join.html?room=${roomId}`; // Redirect to join page
+      };
+      roomsContainer.appendChild(button);
+    });
   });
 }
 
