@@ -1,3 +1,4 @@
+import './style.css';
 import firebase from 'firebase/app';
 import 'firebase/database';
 
@@ -12,40 +13,44 @@ const firebaseConfig = {
 };
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig);
 }
 
 const database = firebase.database();
+const roomsContainer = document.getElementById('roomsContainer');
 
-// Function to fetch and display available rooms
-const fetchRooms = async () => {
-    const roomsRef = database.ref('rooms');
-    roomsRef.on('value', (snapshot) => {
-        const roomsContainer = document.getElementById('roomsContainer');
-        roomsContainer.innerHTML = ''; // Clear previous rooms
+// Fetch room codes from Firebase Realtime Database
+async function fetchRooms() {
+  const roomsRef = database.ref('rooms');
+  
+  roomsRef.on('value', (snapshot) => {
+    roomsContainer.innerHTML = ''; // Clear previous room buttons
+    const rooms = snapshot.val();
+    
+    if (rooms) {
+      Object.keys(rooms).forEach((roomId) => {
+        const roomData = rooms[roomId];
+        const button = document.createElement('button');
+        button.textContent = roomId;
+        
+        // Check participant count and enable/disable button
+        if (roomData.participantCount >= 2) {
+          button.disabled = true; // Greyed out if full
+          button.classList.add('full'); // Optional: Add a class for styling
+        } else {
+          button.onclick = () => {
+            // Logic to join the room goes here
+            console.log(`Joining room: ${roomId}`);
+          };
+        }
+        
+        roomsContainer.appendChild(button);
+      });
+    } else {
+      roomsContainer.textContent = 'No available rooms.';
+    }
+  });
+}
 
-        snapshot.forEach((childSnapshot) => {
-            const roomId = childSnapshot.key;
-            const roomData = childSnapshot.val();
-
-            // Create a button for each room
-            const button = document.createElement('button');
-            button.textContent = roomId;
-
-            // Check if the room has reached the participant limit (2 participants)
-            if (roomData.participants && roomData.participants >= 2) {
-                button.disabled = true; // Greyed out if full
-                button.classList.add('full'); // Add a class for styling
-            } else {
-                button.onclick = () => {
-                    window.location.href = `your_call_page.html?roomId=${roomId}`; // Navigate to call page
-                };
-            }
-
-            roomsContainer.appendChild(button);
-        });
-    });
-};
-
-// Fetch rooms when the page loads
+// Initialize fetching of rooms
 fetchRooms();
