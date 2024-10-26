@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Room Joiner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room List - WebRTC</title>
 </head>
 <body>
-    <div id="rooms"></div>
-    <script src="./main.js" type="module"></script>
+  <h2>Available Rooms</h2>
+  <div id="roomList"></div>
+  
+  <script type="module">
+    import firebase from 'firebase/app';
+    import 'firebase/database';
+
+    const firebaseConfig = {
+  apiKey: "AIzaSyD1b7InCyJf03f82MBrFCXNd_1lir3nWrQ",
+  authDomain: "lil-testing.firebaseapp.com",
+  databaseURL: "https://lil-testing-default-rtdb.firebaseio.com",
+  projectId: "lil-testing",
+  storageBucket: "lil-testing.appspot.com",
+  messagingSenderId: "309006701748",
+  appId: "1:309006701748:web:2cfa73093e14fbcc2af3e1"
+};
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+
+    const realtimeDatabase = firebase.database();
+    const roomList = document.getElementById('roomList');
+
+    // Function to fetch rooms from Realtime Database
+    function fetchRooms() {
+      realtimeDatabase.ref('rooms').on('value', (snapshot) => {
+        roomList.innerHTML = ''; // Clear previous room list
+
+        snapshot.forEach((roomSnapshot) => {
+          const room = roomSnapshot.val();
+          if (room.participants < room.limit && !room.full) {
+            const roomButton = document.createElement('button');
+            roomButton.textContent = `Room ID: ${room.id}`;
+            roomButton.onclick = () => joinRoom(room.id);
+            roomList.appendChild(roomButton);
+          }
+        });
+      });
+    }
+
+    // Function to join a room by room ID
+    function joinRoom(roomId) {
+      window.location.href = `/join_room.html?roomId=${roomId}`;
+    }
+
+    // Fetch available rooms on page load
+    fetchRooms();
+  </script>
 </body>
 </html>
