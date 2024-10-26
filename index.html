@@ -1,63 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Room List - WebRTC</title>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Available Rooms</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h2>Available Rooms</h2>
-  <div id="roomList"></div> <!-- Ensure this ID matches the JavaScript -->
+    <h1>Available Rooms</h1>
+    <div id="roomsContainer" class="rooms-container"></div>
 
-  <script type="module">
-    import firebase from 'firebase/app';
-    import 'firebase/database';
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyD1b7InCyJf03f82MBrFCXNd_1lir3nWrQ",
-      authDomain: "lil-testing.firebaseapp.com",
-      databaseURL: "https://lil-testing-default-rtdb.firebaseio.com",
-      projectId: "lil-testing",
-      storageBucket: "lil-testing.appspot.com",
-      messagingSenderId: "309006701748",
-      appId: "1:309006701748:web:2cfa73093e14fbcc2af3e1"
-    };
-
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-
-    const realtimeDatabase = firebase.database();
-    const roomList = document.getElementById('roomList'); // Corrected ID here
-
-    // Function to fetch rooms from Realtime Database
-    function fetchRooms() {
-      realtimeDatabase.ref('calls').on('value', (snapshot) => {
-        roomList.innerHTML = ''; // Clear previous room list
-
-        snapshot.forEach((roomSnapshot) => {
-          const room = roomSnapshot.val();
-          if (room.participants < room.limit && !room.full) {
-            const roomButton = document.createElement('button');
-            roomButton.textContent = `Room ID: ${room.id}`;
-            roomButton.onclick = () => joinRoom(room.id, roomButton);
-            roomList.appendChild(roomButton);
-          }
-        });
-      });
-    }
-
-    // Function to join a room and redirect to the remote site
-    function joinRoom(roomId, button) {
-      // Disable button to prevent multiple clicks
-      button.disabled = true;
-
-      // Redirect with room code as query parameter for auto-filling and answering
-      window.location.href = `https://patientsidetesting.netlify.app?roomId=${roomId}`;
-    }
-
-    // Fetch available rooms on page load
-    fetchRooms();
-  </script>
+    <script type="module" src="rooms.js"></script>
 </body>
 </html>
