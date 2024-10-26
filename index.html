@@ -40,16 +40,20 @@
           if (room.participants < room.limit && !room.full) {
             const roomButton = document.createElement('button');
             roomButton.textContent = `Room ID: ${room.id}`;
-            roomButton.onclick = () => joinRoom(room.id);
+            roomButton.onclick = () => joinRoom(room.id, roomButton);
             roomList.appendChild(roomButton);
           }
         });
       });
     }
 
-    // Function to join a room by room ID
-    function joinRoom(roomId) {
-      window.location.href = `/join_room.html?roomId=${roomId}`;
+    // Function to join a room and redirect to the remote site
+    function joinRoom(roomId, button) {
+      // Disable button to prevent multiple clicks
+      button.disabled = true;
+
+      // Redirect with room code as query parameter for auto-filling and answering
+      window.location.href = `https://patientsidetesting.netlify.app?roomId=${roomId}`;
     }
 
     // Fetch available rooms on page load
